@@ -1,0 +1,32 @@
+module light_rtl( input clk, input reset,
+output reg [2:0] main_road, output reg [2:0] side_road
+);
+parameter MAIN_GREEN = 2'b00; parameter MAIN_YELLOW = 2'b01; parameter SIDE_GREEN = 2'b10; parameter SIDE_YELLOW = 2'b11; reg [1:0] state;
+reg [3:0] counter;
+ 
+always @(posedge clk or posedge reset) begin if (reset) begin
+state <= MAIN_GREEN; counter <= 0;
+end else begin
+if (counter == 4'd9 && state == MAIN_GREEN) begin state <= MAIN_YELLOW;
+counter <= 0;
+end else if (counter == 4'd3 && state == MAIN_YELLOW) begin state <= SIDE_GREEN;
+counter <= 0;
+end else if (counter == 4'd9 && state == SIDE_GREEN) begin state <= SIDE_YELLOW;
+counter <= 0;
+end else if (counter == 4'd3 && state == SIDE_YELLOW) begin state <= MAIN_GREEN;
+counter <= 0; end else begin
+counter <= counter + 1; end
+end end
+always @(*) begin case (state)
+MAIN_GREEN: begin main_road = 3'b001; side_road = 3'b100;
+end
+MAIN_YELLOW: begin main_road = 3'b010; side_road = 3'b100;
+end
+SIDE_GREEN: begin main_road = 3'b100; side_road = 3'b001;
+ 
+end
+SIDE_YELLOW: begin main_road = 3'b100; side_road = 3'b010;
+end
+default: begin main_road = 3'b100; side_road = 3'b100;
+end endcase
+end endmodule
