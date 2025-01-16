@@ -1,0 +1,19 @@
+module light_tb; reg clk;
+reg reset;
+wire [2:0] main_road;
+wire [2:0] side_road;
+light_rtl uut (
+.clk(clk),
+.reset(reset),
+.main_road(main_road),
+.side_road(side_road)
+);
+always #5 clk = ~clk; 
+initial begin
+clk = 0;
+reset = 1;
+$monitor("Time=%0t | Main Road=%b | Side Road=%b", $time, main_road, side_road); 
+#15 reset = 0
+#1000 $finish; 
+end
+endmodule
